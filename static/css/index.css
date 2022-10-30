@@ -1,0 +1,12 @@
+body {
+    display: flex;
+    align-items: center;
+    background-color: blue;
+    background: rgba(40, 185, 207, 1.0);
+    background: -webkit-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    background: -moz-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    background: radial-gradient(ellipse at center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+  }
+  
+
+  

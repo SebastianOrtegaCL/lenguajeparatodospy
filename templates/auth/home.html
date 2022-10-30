@@ -1,0 +1,43 @@
+{% extends './base.html' %}
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+{% endblock %}
+{% block title %} Home {% endblock %}
+
+{% block body %}
+<!-- Navbar -->
+
+<nav>
+    <div class="left">
+        <div>
+            <a href="#" class="inicio" > <img src="{{ url_for('static', filename='img/home.png') }}" style="width: 20px; height: 20px; margin-right: 7px;" alt="">Inicio</a>
+        </div>
+    </div>
+    <div class="right" >
+        <div style="padding-left: 60px">
+            <a href="{{ url_for('aprende') }}">Aprende</a>
+        </div>
+        <div style="padding-left: 60px">
+            <a href="#">F</a>
+        </div>
+        <div style="padding-left: 60px">
+            <a href="#">C</a>
+        </div>
+        <div style="padding-left: 60px">
+            <a href="#">L</a>
+        </div>
+    </div>
+</nav>
+
+
+<body>
+    <h1>Bienvenido, {{ current_user.username }} {{ current_user.password }} </h1>
+    <h1>Su Usuario se ha logueado correctamente.</h1>
+    <li class="nav-item" href="#">
+        <a class="nav-link active" href="{{ url_for('Edit') }}">Editar</a>
+    </li>
+    <a class="btn btn-secondary" href="{{ url_for('logout') }}">Logout</a>
+</body>
+
+{% endblock %}

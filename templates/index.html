@@ -1,0 +1,98 @@
+{% extends './base.html' %}
+
+{% block title %}Página Inicio{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+<nav class="navbar navbar-expand-lg .bg-primary" >
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Lenguaje para todos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" style="justify-content: flex-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="nosotros">Sobre nosotros</a>
+          </li>
+          <li class="nav-item" href="#">
+            <a class="nav-link active" href="aprende">Aprende</a>
+          </li>
+          <li class="nav-item" href="#">
+            <a class="nav-link active" href="editar">Editar</a>
+          </li>
+          <li class="nav-item" href="#">
+            <a class="nav-link active" href="login">Iniciar Sesión</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+
+<!-- First heroe -->
+<div class="px-4 py-5 my-5 text-center">
+  <img class="d-block mx-auto mb-4" src="{{ url_for('static', filename='img/lengua_de_senas.png') }}" alt=""  style="max-width:10% ;">
+  <h1 class="display-5 fw-bold">¡Bienvenido a Lenguaje Para Todos!</h1>
+  <div class="col-lg-6 mx-auto">
+    <p class="lead mb-4">Nuestro objetivo es ofrecer a nuestros clientes novedosas utilidades para lograr una verdadera inclusión en nuestra región metropolitana, empleando un novedoso
+      sistema de intérprete de lenguaje de señas.
+      </p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+      <!--<button type="button" class="btn btn-primary btn-lg px-4 gap-3" ><a class="nav-link active" href="nosotros">Para saber más acerca de nosotros presiona el siguiente boton</a></button> -->
+    </div>
+  </div>
+</div>
+
+
+<!-- Second heroe -->
+
+<div class="container my-5">
+  <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+    <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+      <h1 class="display-4 fw-bold lh-1">Nuestra Misión</h1>
+      <p class="lead">La misión de “lenguaje para todos” es ayudar a los colegios diferenciales dentro de la región metropolitana en la participación de las personas sordas o con alguna disminución de la audición en la educación básica para asegurar un entorno accesible e inclusivo para todos.</p>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+        <button type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold"><a class="nav-link active" href="nosotros">Para saber más acerca de nosotros presiona el siguiente boton</a></button>
+      </div>
+    </div>
+    <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+        <img class="rounded-lg-3" src="{{ url_for('static', filename='img/inclusion.png') }}" alt="" width="350" >
+    </div>
+  </div>
+</div>
+    
+<!-- Third heroe 
+
+<div class="container col-xl-10 col-xxl-8 px-4 py-5">
+  <div class="row align-items-center g-lg-5 py-5">
+    <div class="col-lg-7 text-center text-lg-start">
+      <h1 class="display-4 fw-bold lh-1 mb-3">¿Posees Cuenta?</h1>
+      <p class="col-lg-10 fs-4">Ingresa desde aca</p>
+    </div>
+    <div class="col-md-10 mx-auto col-lg-5">
+      <form class="p-4 p-md-5 border rounded-3" action="/login" method="post">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+          <label for="username">Nombre de Usuario</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" name="password" placeholder="Password">
+          <label for="password">Contraseña</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar Sesión</button>
+        <hr class="my-4">
+        <small class="text-muted">Al iniciar Sesión, Aceptas los Términos y Condiciones.</small>
+      </form>
+    </div>
+  </div>
+</div>
+-->
+
+{% endblock %}

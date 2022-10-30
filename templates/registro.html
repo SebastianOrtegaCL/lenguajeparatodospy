@@ -1,0 +1,111 @@
+{% extends './base.html' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block body %}
+
+
+
+<nav class="navbar navbar-expand-lg .bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Lenguaje para todos</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" style="justify-content: flex-end" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="index">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="nosotros">Sobre nosotros</a>
+        </li>
+        <li class="nav-item" href="#">
+          <a class="nav-link active" href="aprende">Aprende</a>
+        </li>
+        <li class="nav-item" href="#">
+          <a class="nav-link active" href="login">Iniciar Sesión</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="form-register">
+  {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <br />
+      {% for message in messages %}
+      <div class="alert alert-primary alert-dismissible" role="alert">
+          <strong>{{ message }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    <form action="{{url_for('registro')}}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div style="margin-right: 30px; margin-left: 30px">
+
+      <div style="display:flex; flex-direction:row; justify-content: center;">
+        <div class="left" style="display: flex; flex-direction: column;">
+          <div class="reg">
+            {{ form.hidden_tag() }}
+            {{ form.rut(class='controls', placeholder='Rut') }}
+          </div>
+          <div class="reg">
+            {{ form.username(class='controls', placeholder='Username') }}
+          </div>
+          <div class="reg">
+            {{ form.password(class='controls', placeholder='Password') }}
+          </div>
+          <div class="reg">
+            {{ form.comuna(class='controls', placeholder='Comuna') }}
+          </div>
+          <div class="reg">
+            {{ form.nombre(class='controls', placeholder='Nombre') }}
+          </div>
+        </div>
+
+        <div class="right" style="display: flex; flex-direction: column;">
+          <div>
+            {{ form.apellido(class='controls', placeholder='Apellido' )}}
+          </div>
+          <div>
+            {{ form.tipoUsuario(class='controls', placeholder='Como quieres que te identiques.. (Estudiante, Docente)') }}
+          </div>
+          <div>
+            {{ form.telefono(class='controls', placeholder='Telefono') }}
+          </div>
+          <div>
+            {{ form.direccion(class='controls', placeholder='Direccion') }}
+          </div>
+          <div>
+            {{ form.correo(class='controls', placeholder='Correo' )}}
+          </div>
+          <div>
+            {{ form.tiposexo(class='controls', placeholder='Genero') }}
+          </div>
+        </div>
+          </div>
+          <button class="btn btn-primary btn-block">
+              Registrar
+            </button>
+      <p><a href="{{ url_for('login') }}">¿Ya tengo Cuenta?</a></p>
+    </form>
+</section>
+
+{% endblock %}

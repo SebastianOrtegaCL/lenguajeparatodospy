@@ -1,0 +1,49 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: blue;
+  background: rgba(40, 185, 207, 1.0);
+  background: -webkit-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+  background: -moz-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+  background: radial-gradient(ellipse at center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  min-width: 300px;
+  min-height: 259px;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.form-signin ::placeholder {
+  color: black !important;
+  opacity: 0.5;
+}
+
