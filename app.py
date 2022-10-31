@@ -1,5 +1,3 @@
-from wsgiref.validate import validator
-from xml.dom import ValidationErr
 from flask import Flask, render_template, request, redirect, url_for, flash, Response
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect  # Para el token de protección
@@ -155,6 +153,52 @@ class LoginRegisterForm(FlaskForm):
     direccion = StringField('direccion', validators=[InputRequired()])
     correo = StringField('correo', validators=[InputRequired()])
     tiposexo = StringField('tiposexo', validators=[InputRequired()])
+###
+class UserForm(FlaskForm):
+    nombre = StringField('Nombre', validators=[InputRequired()])
+    apellidos = StringField('Apellido', validators=[InputRequired()])
+    username = StringField('Username', validators=[InputRequired()])
+    password = PasswordField('New Password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
+    confirm  = PasswordField('Repeat Password')
+    # correo = StringField('Correo', validators=[InputRequired()])
+    # telefono = StringField('Teléfono', validators=[InputRequired()])
+    # direccion = StringField('Dirección', validators=[InputRequired()])
+    # submit = SubmitField("Actualizar")
+
+@app.route('/perfil')
+def perfil():
+    return render_template('perfil.html')
+
+@app.route('/perfil/update/<id>', methods=['GET', 'POST'])
+@login_required
+def updatePerfil(id):
+    cur = db.connection.cursor()
+    form = UserForm()
+    cur.execute('SELECT * FROM usuario WHERE id = {}'.format(id))
+    form_update = cur.fetchall()
+    if request.method == 'POST' and form.validate_on_submit:
+        nombre = form.nombre.data
+        apellidos = form.apellidos.data
+        username = form.username.data
+        print('Registro: ' + nombre, apellidos, username)
+        try:
+            cur.execute("""
+                UPDATE usuario
+                SET nombre = %s,
+                    apellidos = %s,
+                    username = %s
+                WHERE id = %s
+            """, (nombre, apellidos, username, id))
+            db.connection.commit()
+            flash("Info actualizada correctamente")
+            return redirect(url_for('perfil'))
+        except:
+            flash("Error, datos no han podido ser modificados")
+            return render_template("perfil.html", form=form)
+    else:
+        return render_template('update.html', form=form, form_update=form_update[0])
+
+
 
 
 @login_manager_app.user_loader
@@ -200,9 +244,6 @@ def home():
 def aprende():
     return render_template('aprende.html')
 
-@app.route('/perfil')
-def perfil():
-    return render_template('perfil.html')
 
 @app.route('/video_feed')
 def video_feed():

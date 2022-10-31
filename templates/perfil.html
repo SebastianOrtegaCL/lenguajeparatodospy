@@ -9,17 +9,43 @@
     <div class="card">
         <div class="card-header">
             {{ current_user.username }}
-
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
         </div>
         <div class="card-body">
             <h5 class="card-title">Bienvenido a tu perfil</h5>
             <p class="card-text">
-                <strong>Name:</strong>
+                <strong>Nombre:</strong>
                 {{ current_user.nombre }}
-
+                <strong>Username: </strong>
+                {{ current_user.username}}
+                <strong>Actual password : </strong>
+                {{ current_user.password }}
+                <strong>Comuna</strong>
+                {{ current_user.comuna }}
+                <strong>Apellido: </strong>
+                {{ current_user.apellidos }}
+                <strong>Tipo de usuario: </strong>
+                {{ current_user.tipoUsuario }}
+                <strong>Telefono: </strong>
+                {{ current_user.telefono }}
+                <strong>Direccion :  </strong>
+                {{ current_user.direccion }}
+                <strong>Correo : </strong>
+                {{ current_user.correo }}
+                <strong>Genero : </strong>
+                {{ current_user.tipoSexo }}
             </p>
             <a href="{{ url_for('logout') }} " class="btn btn-secondary btn-sm">Logout</a>
-            <a href="#" class="btn btn-secondary btn-sm"> Actualizar perfil </a>
+            <a href="{{ url_for('updatePerfil', id=current_user.id) }}" class="btn btn-secondary btn-sm"> Actualizar perfil </a>
 
         </div>
 

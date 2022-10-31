@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="shadow p-3 mb-5 bg-body rounded">
+        <form action="/perfil/update/{{ form_update.0 }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <br>
+            {{ form.hidden_tag() }}
+            {{ form.nombre.label(class="form-label")}}
+            {{ form.nombre(class="form-control", value=form_update.5) }}
+            <br>
+            {{ form.apellidos.label(class="form-label")}}
+            {{ form.apellidos(class="form-control", value=form_update.6) }}
+            <br>
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control", value=form_update.2) }}
+
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control")}}
+
+            {{ form.confirm.label(class="form-label") }}
+            {{ form.confirm(class="form-control") }}
+            
+            <br>
+            <button class="btn btn-primary btn-block">
+                Actualizar
+              </button>
+        </form>
+
+    </div>
+{% endblock %}
