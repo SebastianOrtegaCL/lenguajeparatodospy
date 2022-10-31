@@ -200,6 +200,10 @@ def home():
 def aprende():
     return render_template('aprende.html')
 
+@app.route('/perfil')
+def perfil():
+    return render_template('perfil.html')
+
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
