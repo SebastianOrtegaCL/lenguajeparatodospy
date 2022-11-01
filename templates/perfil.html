@@ -3,10 +3,130 @@
 {% block customCSS %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 {% endblock %}
-
+<style>
+    
+</style>
 {% block body %}
-<div class="container bootstrap snippet">
-    <div class="card">
+<section class="w-100 p-5">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-body text-center">
+                    <img src="https://www.metroecuador.com.ec/resizer/1DVfy8GOa3gBhEwGHP7fdXNCBxk=/1440x1080/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/metroworldnews/EMXG2UI3UNEUXAOYFXWKFJ6UOQ.png" alt="..." class="card-img-top rounded-circle"
+                    style="width: 150px; height: 150px;">
+                    <h5 class="my-3"> {{ current_user.nombre }} </h5>
+                    <p class="text-muted mb-4"> Actualmente desempeñando el rol de estudiante </p>
+                    <label for="" class="form-label">Actualizar foto</label>
+                    <div class="d-flex justify-content-center mb-2">
+                        <input type="file" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card mb-4 shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Nombre</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"> {{ current_user.nombre }} </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Apellido</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"> {{ current_user.apellidos }} </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Username</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"> {{ current_user.username }} </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Comuna</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"> {{ current_user.comuna }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Teléfono</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"> {{ current_user.telefono }} </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Dirección</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"> {{ current_user.direccion }} </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Correo</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"> {{ current_user.correo }} </p>
+                        </div>
+                    </div>
+                    <!-- Rut  -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4 mb-md-0 shadow">
+                        <div class="card-body">
+                            <p class="mb-4 text-center"> Lista de alumnos </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4 mb-md-0 shadow">
+                        <div class="card-body text-center">
+                            <p class="mb-4"> To Do </p>
+                            <div>
+                                <input type="checkbox" value="foo" id="foo" name="foo" class="mt-3">
+                                <label for="" style=" padding-top: 15px; 
+                                padding-right: 15px; 
+                                padding-bottom: 15px; 
+                                padding-left: 60px; "> Tarea 1</label>
+                                <button class="btn btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                          </svg>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- <div class="card" style="width: 18rem;">
+        <img src="https://www.metroecuador.com.ec/resizer/1DVfy8GOa3gBhEwGHP7fdXNCBxk=/1440x1080/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/metroworldnews/EMXG2UI3UNEUXAOYFXWKFJ6UOQ.png" alt="..." class="card-img-top">
         <div class="card-header">
             {{ current_user.username }}
             {% with messages = get_flashed_messages() %}
@@ -25,32 +145,42 @@
             <p class="card-text">
                 <strong>Nombre:</strong>
                 {{ current_user.nombre }}
+                <br>
                 <strong>Username: </strong>
                 {{ current_user.username}}
+                <br>
                 <strong>Actual password : </strong>
                 {{ current_user.password }}
+                <br>
                 <strong>Comuna</strong>
                 {{ current_user.comuna }}
+                <br>
                 <strong>Apellido: </strong>
                 {{ current_user.apellidos }}
+                <br>
                 <strong>Tipo de usuario: </strong>
                 {{ current_user.tipoUsuario }}
+                <br>
                 <strong>Telefono: </strong>
                 {{ current_user.telefono }}
+                <br>
                 <strong>Direccion :  </strong>
                 {{ current_user.direccion }}
+                <br>
                 <strong>Correo : </strong>
                 {{ current_user.correo }}
+                <br>
                 <strong>Genero : </strong>
                 {{ current_user.tipoSexo }}
+                <br>
             </p>
             <a href="{{ url_for('logout') }} " class="btn btn-secondary btn-sm">Logout</a>
             <a href="{{ url_for('updatePerfil', id=current_user.id) }}" class="btn btn-secondary btn-sm"> Actualizar perfil </a>
 
         </div>
 
-    </div>
-</div>
+    </div> -->
+</section>
 {% endblock %}
 </html>
   
