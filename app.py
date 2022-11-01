@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, Res
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect  # Para el token de protección
 from flask_login import LoginManager, login_user, logout_user, login_required
-
 from flask_wtf import FlaskForm
 from wtforms import *
 from wtforms.validators import *
@@ -155,12 +154,16 @@ class LoginRegisterForm(FlaskForm):
     tiposexo = StringField('tiposexo', validators=[InputRequired()])
 ###
 class UserForm(FlaskForm):
-    nombre = StringField('Nombre', validators=[InputRequired()])
-    apellidos = StringField('Apellido', validators=[InputRequired()])
-    username = StringField('Username', validators=[InputRequired()])
-    password = PasswordField('New Password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
-    confirm  = PasswordField('Repeat Password')
-    # correo = StringField('Correo', validators=[InputRequired()])
+    nombre = StringField('Nombre', validators=[InputRequired(), Length(min=3, max=25)])
+    apellidos = StringField('Apellido', validators=[InputRequired(), Length(min=3, max=25)])
+    username = StringField('Username', validators=[InputRequired(), Length(min=3, max=25)])
+    password = PasswordField('Nueva contraseña', validators=[
+        InputRequired(),
+        Length(min=3, max=15),
+        ])
+    correo = EmailField('Correo Electronico', [
+        validators.Length(min=6, max=35),
+        ])
     # telefono = StringField('Teléfono', validators=[InputRequired()])
     # direccion = StringField('Dirección', validators=[InputRequired()])
     # submit = SubmitField("Actualizar")
