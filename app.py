@@ -6,6 +6,8 @@ from flask_wtf import FlaskForm
 from wtforms import *
 from wtforms.validators import *
 
+from werkzeug.utils import secure_filename
+
 import cv2
 import datetime, time
 import os, sys
@@ -175,18 +177,16 @@ def updatePerfil(id):
     form = UserForm()
     cur.execute('SELECT * FROM usuario WHERE id = {}'.format(id))
     form_update = cur.fetchall()
-    print(form_update[0][12])
-    image = b64encode(form_update[0][12]).decode("utf-8")
-    
     if request.method == 'POST' and form.validate_on_submit:
         nombre = form.nombre.data
         apellidos = form.apellidos.data
         username = form.username.data
         password = form.password.data
         correo = form.correo.data
-        imagen = form.imagen.data
+        comuna = request.form['comuna']
+        pic = form.imagen.data
         
-        print('Registro: ' + nombre, apellidos, username, password, correo, imagen)
+        print('Registro: ' + nombre, apellidos, username, password, correo, comuna, pic)
         try:
             cur.execute("""
                 UPDATE usuario
@@ -195,20 +195,18 @@ def updatePerfil(id):
                     username = %s,
                     password = %s,
                     correo = %s,
+                    comuna = %s,
                     imagen = %s
                 WHERE id = %s
-            """, (nombre, apellidos, username, password, correo, imagen, id))
+            """, (nombre, apellidos, username, password, correo, comuna, pic, id))
             db.connection.commit()
             flash("Info actualizada correctamente")
             return redirect(url_for('perfil'))
         except:
             flash("Error, datos no han podido ser modificados")
-            return render_template("perfil.html", form=form, image=image)
+            return render_template("perfil.html", form=form,  )
     else:
-        return render_template('update.html', form=form, form_update=form_update[0], image=image)
-
-
-
+        return render_template('update.html', form=form, form_update=form_update[0], )
 
 @login_manager_app.user_loader
 def load_user(id):
