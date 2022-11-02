@@ -4,7 +4,7 @@ from flask_login import UserMixin  # Atributo para las sesiones
 
 class User(UserMixin):
 
-    def __init__(self, id, rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo):
+    def __init__(self, id, rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo, imagen):
         self.id = id
         self.rut = rut
         self.username = username
@@ -17,6 +17,7 @@ class User(UserMixin):
         self.direccion = direccion
         self.correo = correo
         self.tipoSexo = tipoSexo
+        self.imagen = imagen
 
        
     @classmethod

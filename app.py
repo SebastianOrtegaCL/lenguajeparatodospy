@@ -15,6 +15,8 @@ import mediapipe as mp
 import pandas as pd
 import pickle
 
+from base64 import b64encode
+
 # Modelos
 from models.ModelUser import ModelUser
 
@@ -157,18 +159,12 @@ class UserForm(FlaskForm):
     nombre = StringField('Nombre', validators=[InputRequired(), Length(min=3, max=25)])
     apellidos = StringField('Apellido', validators=[InputRequired(), Length(min=3, max=25)])
     username = StringField('Username', validators=[InputRequired(), Length(min=3, max=25)])
-    password = PasswordField('Nueva contraseña', validators=[
-        InputRequired(),
-        Length(min=3, max=15),
-        ])
-    correo = EmailField('Correo Electronico', [
-        validators.Length(min=6, max=35),
-        ])
-    # telefono = StringField('Teléfono', validators=[InputRequired()])
-    # direccion = StringField('Dirección', validators=[InputRequired()])
-    # submit = SubmitField("Actualizar")
+    password = PasswordField('Contraseña', validators=[InputRequired(),])
+    correo = EmailField('Correo', validators=[InputRequired()])
+    imagen = FileField('Sube tu foto de perfil', validators=[InputRequired()])
 
-@app.route('/perfil')
+@app.route('/perfil', methods=['GET'])
+@login_required
 def perfil():
     return render_template('perfil.html')
 
@@ -179,27 +175,37 @@ def updatePerfil(id):
     form = UserForm()
     cur.execute('SELECT * FROM usuario WHERE id = {}'.format(id))
     form_update = cur.fetchall()
+    print(form_update[0][12])
+    image = b64encode(form_update[0][12]).decode("utf-8")
+    
     if request.method == 'POST' and form.validate_on_submit:
         nombre = form.nombre.data
         apellidos = form.apellidos.data
         username = form.username.data
-        print('Registro: ' + nombre, apellidos, username)
+        password = form.password.data
+        correo = form.correo.data
+        imagen = form.imagen.data
+        
+        print('Registro: ' + nombre, apellidos, username, password, correo, imagen)
         try:
             cur.execute("""
                 UPDATE usuario
                 SET nombre = %s,
                     apellidos = %s,
-                    username = %s
+                    username = %s,
+                    password = %s,
+                    correo = %s,
+                    imagen = %s
                 WHERE id = %s
-            """, (nombre, apellidos, username, id))
+            """, (nombre, apellidos, username, password, correo, imagen, id))
             db.connection.commit()
             flash("Info actualizada correctamente")
             return redirect(url_for('perfil'))
         except:
             flash("Error, datos no han podido ser modificados")
-            return render_template("perfil.html", form=form)
+            return render_template("perfil.html", form=form, image=image)
     else:
-        return render_template('update.html', form=form, form_update=form_update[0])
+        return render_template('update.html', form=form, form_update=form_update[0], image=image)
 
 
 
@@ -221,7 +227,7 @@ def login():
     form=LoginForm()
     if request.method == 'POST':
          user = User(0, 1, form.username.data,
-                     form.password.data, 4, 5, 6, 7, 8, 9, 10, 11)
+                     form.password.data, 4, 5, 6, 7, 8, 9, 10, 11, 12)
          logged_user = ModelUser.login(db, user)
          if logged_user != None:
              if logged_user.password:

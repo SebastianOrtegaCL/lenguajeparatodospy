@@ -11,7 +11,7 @@ class ModelUser():
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                user = User(row[0], row[1], row[2], User.check_password( row[3], user.password ), row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+                user = User(row[0], row[1], row[2], User.check_password( row[3], user.password ), row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12])
                 return user
             else:
                 return None
@@ -28,7 +28,7 @@ class ModelUser():
             if row != None:
                 ##print("funcionó")
                 print(User)
-                return User(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],row[11])
+                return User(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],row[11], row[12])
             else:
                 return None
         except Exception as ex:

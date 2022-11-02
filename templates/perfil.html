@@ -7,6 +7,7 @@
     
 </style>
 {% block body %}
+
 <section class="w-100 p-5">
     <div class="row">
         <div class="col-lg-4">
@@ -16,10 +17,7 @@
                     style="width: 150px; height: 150px;">
                     <h5 class="my-3"> {{ current_user.nombre }} </h5>
                     <p class="text-muted mb-4"> Actualmente desempeñando el rol de estudiante </p>
-                    <label for="" class="form-label">Actualizar foto</label>
-                    <div class="d-flex justify-content-center mb-2">
-                        <input type="file" class="form-control" />
-                    </div>
+                        
                 </div>
             </div>
         </div>
@@ -88,6 +86,19 @@
                             <p class="text-muted mb-0"> {{ current_user.correo }} </p>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-center mt-5 mb-3">
+                        <a href="{{ url_for('updatePerfil', id=current_user.id) }}" class="btn btn-secondary btn-sm"> Actualizar perfil </a>
+                    </div>
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-primary alert-dismissible" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
                     <!-- Rut  -->
                 </div>
             </div>
@@ -117,69 +128,12 @@
                                           </svg>
                                 </button>
                             </div>
-
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
-    <!-- <div class="card" style="width: 18rem;">
-        <img src="https://www.metroecuador.com.ec/resizer/1DVfy8GOa3gBhEwGHP7fdXNCBxk=/1440x1080/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/metroworldnews/EMXG2UI3UNEUXAOYFXWKFJ6UOQ.png" alt="..." class="card-img-top">
-        <div class="card-header">
-            {{ current_user.username }}
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-primary alert-dismissible" role="alert">
-                <strong>{{ message }}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Bienvenido a tu perfil</h5>
-            <p class="card-text">
-                <strong>Nombre:</strong>
-                {{ current_user.nombre }}
-                <br>
-                <strong>Username: </strong>
-                {{ current_user.username}}
-                <br>
-                <strong>Actual password : </strong>
-                {{ current_user.password }}
-                <br>
-                <strong>Comuna</strong>
-                {{ current_user.comuna }}
-                <br>
-                <strong>Apellido: </strong>
-                {{ current_user.apellidos }}
-                <br>
-                <strong>Tipo de usuario: </strong>
-                {{ current_user.tipoUsuario }}
-                <br>
-                <strong>Telefono: </strong>
-                {{ current_user.telefono }}
-                <br>
-                <strong>Direccion :  </strong>
-                {{ current_user.direccion }}
-                <br>
-                <strong>Correo : </strong>
-                {{ current_user.correo }}
-                <br>
-                <strong>Genero : </strong>
-                {{ current_user.tipoSexo }}
-                <br>
-            </p>
-            <a href="{{ url_for('logout') }} " class="btn btn-secondary btn-sm">Logout</a>
-            <a href="{{ url_for('updatePerfil', id=current_user.id) }}" class="btn btn-secondary btn-sm"> Actualizar perfil </a>
-
-        </div>
-
-    </div> -->
 </section>
 {% endblock %}
 </html>

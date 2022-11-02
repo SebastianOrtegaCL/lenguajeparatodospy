@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
-
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profileUpdate.css') }}">
+{% endblock %}
 {% block body %}
-    <div class="shadow p-3 mb-5 bg-body rounded">
+    <section class="w-100 p-4 d-flex justify-content-center pb-4">
         <form action="/perfil/update/{{ form_update.0 }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <br>
@@ -14,18 +16,23 @@
             <br>
             {{ form.username.label(class="form-label") }}
             {{ form.username(class="form-control", value=form_update.2) }}
-
-            {{ form.password.label(class="form-label") }}
-            {{ form.password(class="form-control") }}
-
-            {{ form.correo.label(class="form-label") }}
-            {{ form.correo(class="form-control") }}
-            
             <br>
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control", value=form_update.3) }}
+            <br>
+            {{ form.correo.label(class="form-label") }}
+            {{ form.correo(class="form-control", value=form_update.10) }}
+            <br>
+            {{ form.imagen.label() }}
+            {{ form.imagen(class="form-control",)}}
+            {{ form_update.12 }}
+
+            <br>
+            <img src="data:;base64,{{ image }}" alt="foto">
             <button class="btn btn-primary btn-block">
                 Actualizar
               </button>
         </form>
 
-    </div>
+    </section>
 {% endblock %}
