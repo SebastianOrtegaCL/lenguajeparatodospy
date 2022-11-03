@@ -4,7 +4,7 @@ from flask_wtf.csrf import CSRFProtect  # Para el token de protección
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField, FileField
-from wtforms.validators import *
+from wtforms.validators import InputRequired, Length
 
 from werkzeug.utils import secure_filename
 
