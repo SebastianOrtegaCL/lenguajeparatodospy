@@ -225,7 +225,7 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         user = User(0, 1, form.username.data,
-                    form.password.data, 4, 5, 6, 7, 8, 9, 10, 11)
+                    form.password.data, 4, 5, 6, 7, 8, 9, 10, 11, 12)
         logged_user = ModelUser.login(db, user)
         if logged_user != None:
             if logged_user.password:
@@ -343,6 +343,10 @@ def delete_user(id):
         cur.execute("SELECT tipoUsuario FROM usuario WHERE id=(%s)", (id,))
         db.connection.commit()
     return redirect(url_for('Edit'))
+
+@app.route('/menuAdministrador')
+def menuAdministrador():
+    return render_template('menuAdministrador.html')
 
 @app.route('/logout')
 def logout():
