@@ -220,26 +220,26 @@ def pindex():
 def index():
     return render_template('index.html')
 
-@app.route('/login', methods = ['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    form=LoginForm()
+    form = LoginForm()
     if request.method == 'POST':
-         user = User(0, 1, form.username.data,
-                     form.password.data, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-         logged_user = ModelUser.login(db, user)
-         if logged_user != None:
-             if logged_user.password:
-                 login_user(logged_user)
-                 return redirect(url_for('home'))
-             else:
-                 flash("Clave Incorrecta...")
-                 return render_template('auth/login.html', form=form)
-         else:
-             print("Usuario no encontrado")
-             flash("Usuario no encontrado...")
-             return render_template('auth/login.html', form=form)
+        user = User(0, 1, form.username.data,
+                    form.password.data, 4, 5, 6, 7, 8, 9, 10, 11)
+        logged_user = ModelUser.login(db, user)
+        if logged_user != None:
+            if logged_user.password:
+                login_user(logged_user)
+                return redirect(url_for('menuAdministrador'))
+            else:
+                flash("Clave Incorrecta...")
+                return render_template('auth/login.html', form=form)
+        else:
+            print("Usuario no encontrado")
+            flash("Usuario no encontrado...")
+            return render_template('auth/login.html', form=form)
     else:
-         return render_template('auth/login.html', form=form)   
+        return render_template('auth/login.html', form=form)   
 
 
 @app.route('/home')
@@ -277,10 +277,72 @@ def tasks():
 @login_required
 def Edit():
     cur = db.connection.cursor()
-    cur.execute('SELECT U.id, U.rut, U.username, U.password, C.nombre FROM usuario U JOIN comunas C ON U.comuna = C.codCom;')
+    cur.execute(
+        'SELECT U.id, U.rut, U.nombre, U.apellidos, C.nombre, t.tipoUsuario FROM usuario U INNER JOIN comunas C ON U.comuna = C.codCom INNER JOIN tipousuario t ON U.tipousuario = t.codtipoUsuario;')
     data = cur.fetchall()
     print(type(data))
-    return render_template('edit.html', usuarios = data)
+    return render_template('edit.html', usuarios=data)
+
+@app.route('/agregarUsuario', methods=['GET', 'POST'])
+def agregarUsuario():
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM tipousuario")
+    tipoUsuario = cur.fetchall()
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM comunas")
+    comunas = cur.fetchall()
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM tiposexo")
+    tipoSexo = cur.fetchall()
+
+    cur.close()
+
+    if request.method == 'POST':
+        rut = request.form['rut']
+        username = request.form['username']
+        password = request.form['password']
+        comuna = request.form['comuna']
+        nombre = request.form['nombre']
+        apellidos = request.form['apellido']
+        tipoDeUsuario = request.form['tipoUsuario']
+        telefono = request.form['telefono']
+        direccion = request.form['direccion']
+        correo = request.form['correo']
+        tipoSexo = request.form['tipoSexo']
+        #imagen = 
+        print('Registro: ' + rut, username, password, comuna, nombre, apellidos, tipoDeUsuario, telefono, direccion, correo, tipoSexo)
+        flash("Usuario Agregado")
+        return redirect(url_for(agregarUsuario))
+    else:
+        flash("Usuario No Agregado")
+        return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
+
+@app.route('/delete/<id>')
+@login_required
+def delete_user(id):
+    # flash(id)
+    cur = db.connection.cursor()
+    cur.execute("SELECT tipoUsuario FROM usuario where id=(%s)", (id,))
+    data = cur.fetchall()
+    tipoUsuario = data[0]
+
+    if (tipoUsuario == (1,)):
+        print("Administrador")
+        flash("Se Eliminó un administrador")
+        cur.execute("CALL EliminarUsuarioA_U(%s)", (id,))
+        db.connection.commit()
+    elif (tipoUsuario == (2,)):
+        flash("Se Eliminó un profesor")
+        cur.execute("CALL EliminarUsuarioP_U(%s)", (id,))
+        db.connection.commit()
+    else:
+        flash("Otro Usuario")
+        cur.execute("SELECT tipoUsuario FROM usuario WHERE id=(%s)", (id,))
+        db.connection.commit()
+    return redirect(url_for('Edit'))
 
 @app.route('/logout')
 def logout():

@@ -1,8 +1,14 @@
 html,
 body {
   height: 100%;
+  background-color: blue;
+  background: rgba(40, 185, 207, 1.0);
+  background: -webkit-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+  background: -moz-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+  background: radial-gradient(ellipse at center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
 }
 
+/* VersiÃ³n Anterior
 body {
     background-color: blue;
         background: rgba(40, 185, 207, 1.0);
@@ -15,4 +21,95 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
+}
+*/
+
+.container {
+  width: 100%;
+  max-width: 1500px;
+  margin: auto;
+}
+
+.table {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  table-layout: fixed;
+}
+
+.table caption {
+  font-size: 28px;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin: 8px 0px;
+}
+
+.table tr {
+  border-radius: 10%;
+  /*  border: 1px solid #ddd;
+  background-color: #f8f8f8; */
+  border: 1px solid #ddd;
+  background-color: #DFEEF0;
+
+}
+
+.table th,
+.table td {
+  font-size: 16px;
+  padding: 8px;
+  text-align: center;
+}
+
+.table thead th {
+  text-transform: uppercase;
+  background-color: #ddd;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(169, 173, 173);
+}
+
+@media screen and (max-width: 600px) {
+  .table {
+    border: 0px;
+    border-radius: 10px;
+  }
+
+  .table caption {
+    font-size: 22px;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tr {
+    margin-bottom: 8px;
+    border-bottom: 4px solid #ddd;
+    display: block;
+  }
+
+  .table th,
+  .table td {
+    font-size: 12px;
+  }
+
+  .table td {
+    display: block;
+    border-bottom: 1px solid #ddd;
+    text-align: right;
+  }
+
+  .table td:last-child {
+    border-bottom: 0px;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: uppercase;
+    float: left;
+  }
 }
