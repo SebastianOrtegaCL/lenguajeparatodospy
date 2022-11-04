@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, Response
+from flask import Flask, render_template, request, redirect, url_for, flash, Response, session
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect  # Para el token de protección
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, FileField
-from wtforms.validators import InputRequired, Length
+from wtforms import *
+from wtforms.validators import *
+#libreria para crear random en StringAleatorio
+from random import sample
 
 from werkzeug.utils import secure_filename
 
@@ -170,6 +172,17 @@ class UserForm(FlaskForm):
 def perfil():
     return render_template('perfil.html')
 
+#Método para crear nombre aleatorio de la imagen
+def stringAleatorio():
+    #Generando string aleatorio
+    string_aleatorio = "0123456789abcdefghijklmnopqrstuvwxyz_"
+    longitud         = 20
+    secuencia        = string_aleatorio.upper()
+    resultado_aleatorio  = sample(secuencia, longitud)
+    string_aleatorio     = "".join(resultado_aleatorio)
+    return string_aleatorio
+
+#Actualizar Perfil unitario
 @app.route('/perfil/update/<id>', methods=['GET', 'POST'])
 @login_required
 def updatePerfil(id):
@@ -184,9 +197,17 @@ def updatePerfil(id):
         password = form.password.data
         correo = form.correo.data
         comuna = request.form['comuna']
-        pic = form.imagen.data
-        
-        print('Registro: ' + nombre, apellidos, username, password, correo, comuna, pic)
+        file = form.imagen.data
+        basepath = os.path.dirname (__file__) #La ruta donde se encuentra el archivo actual
+        filename = secure_filename(file.filename) #Nombre original del archivo
+        #capturando extensión del archivo ejemplo: (.png, .jpg, .pdf ...etc)
+        extension = os.path.splitext(filename)[1]
+        nuevoNombreFile  = stringAleatorio() + extension
+
+        #Guardar Archivo en la carpeta img_perfiles que se encuentra en static
+        upload_path = os.path.join (basepath, 'static/img_perfiles', nuevoNombreFile) 
+        file.save(upload_path)
+        print('Registro: ' + nombre, apellidos, username, password, correo, comuna, nuevoNombreFile)
         try:
             cur.execute("""
                 UPDATE usuario
@@ -198,7 +219,7 @@ def updatePerfil(id):
                     comuna = %s,
                     imagen = %s
                 WHERE id = %s
-            """, (nombre, apellidos, username, password, correo, comuna, pic, id))
+            """, (nombre, apellidos, username, password, correo, comuna, nuevoNombreFile, id))
             db.connection.commit()
             flash("Info actualizada correctamente")
             return redirect(url_for('perfil'))
@@ -229,13 +250,20 @@ def login():
         logged_user = ModelUser.login(db, user)
         if logged_user != None:
             if logged_user.password:
+                session['tipoUsuario'] = logged_user.tipoUsuario
                 login_user(logged_user)
-                return redirect(url_for('menuAdministrador'))
+
+                if session['tipoUsuario'] == 1:
+                    return redirect(url_for('menuAdministrador'))
+                elif session['tipoUsuario'] == 2:
+                    return redirect(url_for('menuDocente'))
+                elif session['tipoUsuario'] == 3:
+                    return redirect(url_for('menuEstudiante'))
             else:
                 flash("Clave Incorrecta...")
                 return render_template('auth/login.html', form=form)
         else:
-            print("Usuario no encontrado")
+            #print("Usuario no encontrado")
             flash("Usuario no encontrado...")
             return render_template('auth/login.html', form=form)
     else:
@@ -248,9 +276,17 @@ def home():
     return render_template('auth/home.html')
 
 @app.route('/aprende')
+@login_required
 def aprende():
-    return render_template('aprende.html')
-
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+    if tipoUsuario == 1:
+        return "<h1> No tiene acceso a este modulo</h1>"
+    elif tipoUsuario == 2:
+        return render_template('aprende.html')
+    elif tipoUsuario == 3:
+        return render_template('aprende.html')
+        # return render_template('error401', 400)
 
 @app.route('/video_feed')
 def video_feed():
@@ -284,6 +320,7 @@ def Edit():
     return render_template('edit.html', usuarios=data)
 
 @app.route('/agregarUsuario', methods=['GET', 'POST'])
+@login_required
 def agregarUsuario():
 
     cur = db.connection.cursor()
@@ -311,14 +348,13 @@ def agregarUsuario():
         telefono = request.form['telefono']
         direccion = request.form['direccion']
         correo = request.form['correo']
-        tipoSexo = request.form['tipoSexo']
+        tipoDeSexo = request.form['tipoSexo']
         #imagen = 
-        print('Registro: ' + rut, username, password, comuna, nombre, apellidos, tipoDeUsuario, telefono, direccion, correo, tipoSexo)
+        print('Registro: ' + rut, username, password, comuna, nombre, apellidos, tipoDeUsuario, telefono, direccion, correo, tipoDeSexo)
         flash("Usuario Agregado")
-        return redirect(url_for(agregarUsuario))
-    else:
-        flash("Usuario No Agregado")
-        return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
+    
+    return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
+
 
 @app.route('/delete/<id>')
 @login_required
@@ -345,8 +381,19 @@ def delete_user(id):
     return redirect(url_for('Edit'))
 
 @app.route('/menuAdministrador')
+@login_required
 def menuAdministrador():
     return render_template('menuAdministrador.html')
+
+@app.route('/menuDocente')
+@login_required
+def menuDocente():
+    return render_template('menuDocente.html')
+
+@app.route('/menuEstudiante')
+@login_required
+def menuEstudiante():
+    return render_template('menuEstudiante.html')
 
 @app.route('/logout')
 def logout():

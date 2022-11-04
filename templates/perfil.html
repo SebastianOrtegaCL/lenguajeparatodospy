@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 {% endblock %}
 <style>
-    
+
 </style>
 {% block body %}
 
@@ -13,11 +13,22 @@
         <div class="col-lg-4">
             <div class="card shadow mb-4">
                 <div class="card-body text-center">
-                    <img src="https://www.metroecuador.com.ec/resizer/1DVfy8GOa3gBhEwGHP7fdXNCBxk=/1440x1080/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/metroworldnews/EMXG2UI3UNEUXAOYFXWKFJ6UOQ.png" alt="..." class="card-img-top rounded-circle"
+                    <!--<img src="{{ url_for('static', filename='img_perfiles/{{current_user.imagen}}') }}"
                     style="width: 150px; height: 150px;">
+                    -->
+                    <img src="static/img_perfiles/{{ current_user.imagen}}" style="width: 100%; height: 100%;" />
                     <h5 class="my-3"> {{ current_user.nombre }} </h5>
-                    <p class="text-muted mb-4"> Actualmente desempeñando el rol de estudiante </p>
-                        
+                    <p class="text-muted mb-4"> Actualmente desempeñando el rol de 
+                        {% if current_user.tipoUsuario == 1: %}
+                            Administrador
+                        {% endif %}
+                        {% if current_user.tipoUsuario == 2: %}
+                            Docente
+                        {% endif %}
+                        {% if current_user.tipoUsuario == 3: %}
+                            Estudiante
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>
@@ -87,18 +98,22 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center mt-5 mb-3">
-                        <a href="{{ url_for('updatePerfil', id=current_user.id) }}" class="btn btn-secondary btn-sm"> Actualizar perfil </a>
-                    </div>
+                        {% if current_user.tipoUsuario != 3: %}
+                        <a href="{{ url_for('updatePerfil', id=current_user.id) }}" class="btn btn-secondary btn-sm">
+                            Actualizar perfil </a>
+                        {% endif %}
+                        </div>
                         {% with messages = get_flashed_messages() %}
                         {% if messages %}
                         {% for message in messages %}
                         <div class="alert alert-primary alert-dismissible" role="alert">
                             <strong>{{ message }}</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
                     <!-- Rut  -->
                 </div>
             </div>
@@ -121,11 +136,14 @@
                                 padding-bottom: 15px; 
                                 padding-left: 60px; "> Tarea 1</label>
                                 <button class="btn btn-danger">
-                                        <i class="bi bi-trash"></i>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                          </svg>
+                                    <i class="bi bi-trash"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                        <path fill-rule="evenodd"
+                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -136,9 +154,9 @@
     </div>
 </section>
 {% endblock %}
+
 </html>
-  
+
 
 
 <!-- Navbar -->
-

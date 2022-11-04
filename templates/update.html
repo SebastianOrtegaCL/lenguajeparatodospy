@@ -4,7 +4,7 @@
 {% endblock %}
 {% block body %}
     <section class="w-100 p-4 d-flex justify-content-center pb-4">
-        <form action="/perfil/update/{{ form_update.0 }}" method="POST">
+        <form action="/perfil/update/{{ form_update.0 }}" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <br>
             {{ form.hidden_tag() }}
