@@ -269,12 +269,6 @@ def login():
     else:
         return render_template('auth/login.html', form=form)   
 
-
-@app.route('/home')
-@login_required  # Login necesario, si no, tira error.
-def home():
-    return render_template('auth/home.html')
-
 @app.route('/aprende')
 @login_required
 def aprende():
