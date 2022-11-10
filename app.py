@@ -41,6 +41,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 
 app = Flask(__name__)
 
+
 app.config['DEBUG'] = True
 app.config['MYSQL_HOST'] = 'lenguajeparatodoos.mariadb.database.azure.com'
 app.config['MYSQL_USER'] = 'administrador@lenguajeparatodoos'
@@ -55,6 +56,15 @@ app.config['MYSQL_PORT'] = 3306
 # app.config['MYSQL_DB'] = 'lenguajeparatodos'
 # app.config['MYSQL_PORT'] = 3306
 
+def create_app(test_config=None):
+    # create and configure the app
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        SECRET_KEY='dev',
+        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+    )
+
+    
 app.secret_key = 'B!1w8NAt1T^%kvhUI*S^'
 csrf = CSRFProtect(app)
 
