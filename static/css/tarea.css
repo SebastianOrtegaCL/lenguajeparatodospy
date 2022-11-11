@@ -1,0 +1,24 @@
+body {
+    background-color: blue;
+    background: rgba(40, 185, 207, 1.0);
+    background: -webkit-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    background: -moz-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    background: radial-gradient(ellipse at center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    margin: 0;
+    padding: 0;
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 300;
+}
+
+html {
+    height: 100%;
+    font-size: 100%;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}

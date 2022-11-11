@@ -173,15 +173,30 @@ class UserForm(FlaskForm):
 def tareas():
     if request.method == 'POST':
         contenido = request.form['content']
+        print(contenido)
         try:
             cur = db.connection.cursor()
-            cur.execute("INSERT INTO tabla_tareas (contenido) VALUES (%s)" %(contenido))
+            cur.execute("INSERT INTO tabla_tareas (contenido) VALUES (%s)", [contenido])
             db.connection.commit()
             return redirect('/tareas')
         except:
             return 'No se ha podido agregar la tarea'
     else:
-        return render_template('tarea.html')
+        cur = db.connection.cursor()
+        cur.execute("SELECT * FROM tabla_tareas")
+        tasks = cur.fetchall()
+        return render_template('tarea.html', tasks=tasks)
+
+@app.route('/delete/<int:id>', methods=['POST', 'GET'])
+def eliminar_tarea(id):
+    try:
+        cur = db.connection.cursor()
+        cur.execute("CALL EliminarTarea(%s)", (id,))
+        db.connection.commit()
+        return redirect('/tareas')
+    except:
+        return 'No se ha podido eliminar la tarea'
+    
 
 @app.route('/perfil', methods=['GET'])
 @login_required

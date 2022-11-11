@@ -1,5 +1,9 @@
 {% extends './base.html' %}
 
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tarea.css') }}">
+{% endblock %}
+
 {% block head %}
     <title> To Do</title>
 {% endblock %}
@@ -16,22 +20,39 @@
             {% for task in tasks %}
                 
             <tr>
-                <td> {{ task.content }} </td>
-                <td> {{ task.date_created.date() }} </td>
+                <td> {{ task.0 }} </td>
+                <td> {{ task.1 }} </td>
                 <td>
-                    <a href="/delete/{{task.id}}">Delete</a>
+                    <a href="/delete/{{task.0}}">Delete</a>
                     <br>
                     <a href="">Update</a>
                     <br>
                 </td>
             </tr>
+            <h1>{{ task.0 }}</h1>
 
             {% endfor %}
         </table>
 
-        <form action="/tareas" method="POST">
+        <!-- <form action="/tareas" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="text" name="content" id="content">
             <input type="submit" value="Add Task">
-        </form>
+        </form> -->
     </div>
+
+
+    <header class="masthead">
+        <div class="container px-5">
+            <div class="card rounded px-5 py-5">
+                <form action="/tareas" method="POST" style="display: flex;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" >
+                    <input type="text" class="form-control form-control-lg mr-3" name="content" id="content"
+                      placeholder="¿Qué tienes que hacer hoy?" style="margin-right: 20px">
+                      <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
 {% endblock %}
