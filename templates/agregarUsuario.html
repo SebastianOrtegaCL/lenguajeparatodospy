@@ -65,10 +65,22 @@
 {% endwith %}
 
 <div class="container">
+
   <h1 style="text-align: center;">Ingrese Un usuario<img style="margin-left: 5px;"
       src="{{ url_for('static', filename='img/add-user.png') }}" alt="" width="10%"> </h1>
+
+
+
+
+
   <div class="container-md">
-    <form class="row g3" action="{{url_for('agregarUsuario')}}" method="POST">
+
+    <!-- Botón de la ventana modal -->
+    
+    <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        Deseo Utilizar el Metodo Simple</button>
+    <!-- Comienzo del Formulario normal-->
+    <form class="row g3" action="{{ url_for('agregarUsuario')}}" method="POST" style="margin-top: 5px ;">
 
 
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -102,24 +114,15 @@
       <div class="col-6 py-2">
         <label class="form-label">Contraseña:</label>
         <div class="input-group mb-3">
-          <!--<input class="form-control" type="password" name="password" id="password" > -->
           <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2"
             type="password" name="password" id="password">
-          <button class="btn btn-outline-secondary" type="button" id="button-addon2" name="wf" onclick="mostrar()"><img
-              src="{{ url_for('static', filename='img/show_password.png') }}" width="15 px"></button>
-          <!-- <input type="button" name="wf" onclick="mostrar()"> -->
         </div>
       </div>
       <div class="col-6 py-2">
         <label class="form-label">Repetir Contraseña:</label>
         <div class="input-group mb-3">
-          <!--<input class="form-control" type="password" name="password" id="password" > -->
           <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2"
             type="password" name="passwordr" id="passwordr">
-          <button class="btn btn-outline-secondary" type="button" id="button-addon2" name="wf"
-            onclick="mostrarPasswordRepeat()"><img src="{{ url_for('static', filename='img/show_password.png') }}"
-              width="15 px"></button>
-          <!-- <input type="button" name="wf" onclick="mostrar()"> -->
         </div>
       </div>
       <div class="col-6 py-2">
@@ -177,31 +180,82 @@
 
 </div>
 
-<!-- Funciones Mostrar Contraseña -->
+<!-- Contenido Modal -->
 
-<script type="text/javascript">
+<!-- content goes here -->
+<div class="col-sm-8">
 
-  function mostrar() {
-    var tipo = document.getElementById("password")
+  <!-- Enter New Student Modal -->
+  <div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
 
-    if (tipo.type == 'password') {
-      tipo.type = 'text';
-    } else {
-      tipo.type = 'password';
-    }
+        <div class="modal-header">
+          <h5 class="modal-title text-primary" style="align-content: center;">Por Favor Agregue un Usuario</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
 
-  }
 
-  function mostrarPasswordRepeat() {
-    var tipo = document.getElementById("passwordr");
+        <div class="modal-body">
 
-    if (tipo.type == 'password') {
-      tipo.type = 'text';
-    } else {
-      tipo.type = 'password';
-    }
+          <form action="{{ url_for('agregarUsuarioFacil')}}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+              <label class="form-label">Tipo de Usuario:</label>
+              <select class="form-select" aria-label="Default select example" name="tipoUsuario" id="tipoUsuario">
+                <option value="0">Seleccione una opción</option>
+                {% for tip in tipoUsuario %}
+                <option value="{{tip.0}}">{{ tip.1 }}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-  }
+            <div class="form-group">
+              <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+              <input class="form-control" type="file" id="formFileMultiple" multiple name="archivo" id="archivo">
+            </div>
 
-</script>
-{% endblock %}
+            <button type="submit" class="btn btn-primary mb-2">Añadir Usuario</button>
+
+          </form>
+
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Fin contenido Modal -->
+
+
+
+    <script type="text/javascript">
+
+      function mostrar() {
+        var tipo = document.getElementById("password")
+
+        if (tipo.type == 'password') {
+          tipo.type = 'text';
+        } else {
+          tipo.type = 'password';
+        }
+
+      }
+
+      function mostrarPasswordRepeat() {
+        var tipo = document.getElementById("passwordr");
+
+        if (tipo.type == 'password') {
+          tipo.type = 'text';
+        } else {
+          tipo.type = 'password';
+        }
+
+      }
+
+
+    </script>
+
+    {% endblock %}

@@ -7,12 +7,12 @@ from wtforms import *
 from wtforms.validators import *
 #libreria para crear random en StringAleatorio
 from random import sample
-
+import openpyxl
 from werkzeug.utils import secure_filename
 
 import cv2
 import datetime, time
-import os, sys
+import os
 import numpy as np
 from threading import Thread
 import mediapipe as mp
@@ -41,6 +41,11 @@ mp_drawing_styles = mp.solutions.drawing_styles
 
 app = Flask(__name__)
 
+app.secret_key = 'B!1w8NAt1T^%kvhUI*S^'
+csrf = CSRFProtect(app)
+
+db = MySQL(app)
+login_manager_app = LoginManager(app)
 
 app.config['DEBUG'] = True
 app.config['MYSQL_HOST'] = 'lenguajeparatodoos.mariadb.database.azure.com'
@@ -56,20 +61,7 @@ app.config['MYSQL_PORT'] = 3306
 # app.config['MYSQL_DB'] = 'lenguajeparatodos'
 # app.config['MYSQL_PORT'] = 3306
 
-def create_app(test_config=None):
-    # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-    )
-
     
-app.secret_key = 'B!1w8NAt1T^%kvhUI*S^'
-csrf = CSRFProtect(app)
-
-db = MySQL(app)
-login_manager_app = LoginManager(app)
 
 def image_processed(hand_img):
     #BGR to RGB
@@ -176,6 +168,20 @@ class UserForm(FlaskForm):
     password = PasswordField('Contraseña', validators=[InputRequired(),])
     correo = EmailField('Correo', validators=[InputRequired()])
     imagen = FileField('Sube tu foto de perfil', validators=[InputRequired()])
+
+@app.route('/tareas', methods=['POST', 'GET'])
+def tareas():
+    if request.method == 'POST':
+        contenido = request.form['content']
+        try:
+            cur = db.connection.cursor()
+            cur.execute("INSERT INTO tabla_tareas (contenido) VALUES (%s)" %(contenido))
+            db.connection.commit()
+            return redirect('/tareas')
+        except:
+            return 'No se ha podido agregar la tarea'
+    else:
+        return render_template('tarea.html')
 
 @app.route('/perfil', methods=['GET'])
 @login_required
@@ -359,6 +365,54 @@ def agregarUsuario():
     
     return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
 
+#Agregar Usuario simple (Excel)
+@app.route('/agregarUsuarioFacil', methods=['GET', 'POST'])
+@login_required
+def agregarUsuarioFacil():
+    print('Registro: ')
+
+    if request.method == 'POST':
+        tipoDeUsuario = request.form['tipoUsuario']
+        # Script para archivo
+        file = request.files['archivo']
+        # La ruta donde se encuentra el archivo actual
+        basepath = os.path.dirname(__file__)
+        # Nombre original del archivo
+        filename = secure_filename(file.filename)
+
+        # capturando extensión del archivo ejemplo: (.png, .jpg, .pdf ...etc)
+        extension = os.path.splitext(filename)[1]
+        print(extension)
+        nuevoNombreFile = stringAleatorio() + extension
+        print(nuevoNombreFile)
+
+        upload_path = os.path.join(
+            basepath, 'static/archivos', nuevoNombreFile)
+        file.save(upload_path)
+
+        df = pd.read_excel(upload_path)
+
+        for row, datos in df.iterrows():
+            rut = str(datos['Rut'])
+            nombre = str(datos['Nombre'])
+            apellidos = str(datos['Apellido'])
+            username = str(datos['Username'])
+            password = str(datos['Password'])
+            comuna = int(datos['Comuna'])
+            tipoUsuario = tipoDeUsuario
+            telefono = str(datos['Telefono'])
+            direccion = str(datos['Direccion'])
+            correo = str(datos['Correo'])
+            tipoSexo = int(datos['Sexo'])
+            imagen = str(datos['Imagen'])
+            cur = db.connection.cursor()
+            cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username,
+                                                                                   password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo, imagen))
+            db.connection.commit()
+            print("Usuario agregado")
+    #os.remove("static/archivos/nuevoNombreFile")
+    flash("Usuario Agregado")
+    return redirect(url_for('agregarUsuario'),)
 
 @app.route('/delete/<id>')
 @login_required
@@ -462,6 +516,50 @@ def update(id):
         db.connection.commit()
         return redirect(url_for('Edit'))
 
+#Ruta Diccionario
+@app.route('/diccionario')
+@login_required
+def diccionario():
+    cur = db.connection.cursor()
+    cur.execute(
+        'SELECT palabra,imagen,frase FROM diccionario;')
+    data = cur.fetchall()
+    print(type(data))
+    return render_template('diccionario.html', usuarios=data)
+
+#Ruta Agregar Diccionario
+@app.route('/agregarDiccionario', methods=['POST'])
+#@login.required
+def agregarDiccionario():
+    if request.method == 'POST':
+        gesto = request.form['gesto']
+        frase = request.form['frase']
+        image = request.form['imagen']
+        usuario = request.form['idUser']
+        print(gesto,frase,image,usuario)
+        # cur = db.connection.cursor()
+
+        # db.connection.commit()
+        # return redirect(url_for('Edit'))
+
+
+    cur = db.connection.cursor()
+    cur.execute(
+        'SELECT palabra,imagen,frase FROM diccionario;')
+    data = cur.fetchall()
+
+    return render_template('diccionario.html', usuarios=data)
+
+#Errores
+#Error 404, página no existente
+@app.errorhandler(404)
+def page_not_found(err):
+    return render_template("page_not_found.html"), 404
+
+#Error 401, Unauthorized
+@app.errorhandler(401)
+def unauthorized(err):
+    return render_template("unauthorized.html"), 401
 
 if __name__ == '__main__':
     app.run(debug=True)
