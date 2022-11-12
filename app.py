@@ -362,8 +362,6 @@ def agregarUsuario():
     cur.execute("SELECT * FROM tiposexo")
     tipoSexo = cur.fetchall()
 
-    cur.close()
-
     if request.method == 'POST':
         rut = request.form['rut']
         username = request.form['username']
@@ -371,16 +369,25 @@ def agregarUsuario():
         comuna = request.form['comuna']
         nombre = request.form['nombre']
         apellidos = request.form['apellido']
-        tipoDeUsuario = request.form['tipoUsuario']
+        tipoUsuario = request.form['tipoUsuario']
         telefono = request.form['telefono']
         direccion = request.form['direccion']
         correo = request.form['correo']
         tipoDeSexo = request.form['tipoSexo']
-        #imagen = 
-        print('Registro: ' + rut, username, password, comuna, nombre, apellidos, tipoDeUsuario, telefono, direccion, correo, tipoDeSexo)
-        flash("Usuario Agregado")
-    
-    return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
+        imagen = "imagen.png"
+        print('Registro' + rut, username,
+                password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoDeSexo, imagen)
+        try:
+            cur = db.connection.cursor()
+            cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username,
+                password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoDeSexo, imagen))
+            db.connection.commit()
+            flash('Usuario agregado')
+            return redirect('/agregarUsuario')
+        except:
+            return 'No se ha podido agregar el usuario'
+    else: 
+        return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
 
 #Agregar Usuario simple (Excel)
 @app.route('/agregarUsuarioFacil', methods=['GET', 'POST'])
@@ -496,10 +503,11 @@ def registro():
         direccion = form.direccion.data
         correo = form.correo.data
         tipoSexo = form.tiposexo.data
+
         print('Registro: ' + rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo)
         
         cur = db.connection.cursor()
-        cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo))
+        cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo, "imagen.png"))
         db.connection.commit()
         print("Usuario agregado")
         flash("Usuario Agregado")
@@ -539,7 +547,7 @@ def update(id):
 def diccionario():
     cur = db.connection.cursor()
     cur.execute(
-        'SELECT palabra,imagen,frase FROM diccionario;')
+        'SELECT * FROM diccionario;')
     data = cur.fetchall()
     print(type(data))
     return render_template('diccionario.html', usuarios=data)
@@ -550,22 +558,40 @@ def diccionario():
 def agregarDiccionario():
     if request.method == 'POST':
         gesto = request.form['gesto']
+        definicion = request.form['definicion']
+        fuente = request.form['fuente']
         frase = request.form['frase']
-        image = request.form['imagen']
-        usuario = request.form['idUser']
-        print(gesto,frase,image,usuario)
-        # cur = db.connection.cursor()
+        file = request.files['imagen']
+        # # La ruta donde se encuentra el archivo actual
+        basepath = os.path.dirname(__file__)
+        #Nombre original del archivo
+        filename = secure_filename(file.filename)
+        # capturando extensión del archivo ejemplo: (.png, .jpg, .pdf ...etc)
+        extension = os.path.splitext(filename)[1]
+        nuevoNombreFile = stringAleatorio() + extension
 
-        # db.connection.commit()
-        # return redirect(url_for('Edit'))
+        # Guardar Archivo en la carpeta img_perfiles que se encuentra en static
+        upload_path = os.path.join(basepath, 'static/img_diccionario', nuevoNombreFile)
+        file.save(upload_path)
+        usuario = request.form['submit']
+        print(gesto,definicion,fuente, frase,nuevoNombreFile, usuario)
+        cur = db.connection.cursor()
+        cur.execute("CALL AgregarGestoI(%s,%s,%s,%s,%s,%s)", (gesto,nuevoNombreFile,definicion,frase,fuente,usuario))
+        db.connection.commit()
+        #flash
+        return redirect(url_for('diccionario'))
+    else:
+        #flash
+        return redirect(url_for('diccionario'))
 
-
+#Visualizar Contenido
+@app.route('/diccionario/<id>', methods=['POST', 'GET'])
+@login_required
+def show_content(id):
     cur = db.connection.cursor()
-    cur.execute(
-        'SELECT palabra,imagen,frase FROM diccionario;')
+    cur.execute('SELECT d.idDiccionario,d.palabra,d.imagen,d.descripcion,d.frase,t.fuente,d.creadoPor FROM diccionario d JOIN tipoFuente t ON d.tipoFuente = t.idFuente WHERE idDiccionario= %s',(id,))
     data = cur.fetchall()
-
-    return render_template('diccionario.html', usuarios=data)
+    return render_template('show_content.html', palabras=data[0])
 
 #Errores
 #Error 404, página no existente

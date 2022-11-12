@@ -51,89 +51,68 @@
 </nav>
 
 <!-- Formulario -->
-
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<br />
-{% for message in messages %}
-<div class="alert alert-primary alert-dismissible" role="alert">
-  <strong>{{ message }}</strong>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
-
 <div class="container">
 
   <h1 style="text-align: center;">Ingrese Un usuario<img style="margin-left: 5px;"
       src="{{ url_for('static', filename='img/add-user.png') }}" alt="" width="10%"> </h1>
 
-
-
-
-
   <div class="container-md">
 
     <!-- Botón de la ventana modal -->
-    
+
     <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-        Deseo Utilizar el Metodo Simple</button>
+      Deseo Utilizar el Metodo Simple</button>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <br />
+    {% for message in messages %}
+    <div class="alert alert-primary alert-dismissible" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <!-- Comienzo del Formulario normal-->
-    <form class="row g3" action="{{ url_for('agregarUsuario')}}" method="POST" style="margin-top: 5px ;">
-
-
+    <form class="row g3" action="/agregarUsuario" method="POST" style="margin-top: 5px ;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-
       <div class="col-4">
-        <label class="form-label">Rut:</label>
+        <label class="form-label">Rut</label>
         <input class="form-control" type="text" name="rut" id="rut">
-
       </div>
 
       <div class="col-4">
-        <label class="form-label">Nombre:</label>
+        <label class="form-label">Nombre</label>
         <input class="form-control" type="text" name="nombre" id="nombre">
       </div>
 
       <div class="col-4">
-        <label class="form-label">Apellido:</label>
-        <input class="form-control" type="text" name="apellido" id="apellido">
+        <label class="form-label">Apellido</label>
+        <input class="form-control" type="text" name="apellido">
       </div>
 
-      <div class="col-6 py-2">
-        <label class="form-label">Correo:</label>
-        <input class="form-control" type="email" name="correo" id="correo" required>
-      </div>
-      <div class="col-6 py-2">
-        <label class="form-label"> Repetir Correo:</label>
-        <input class="form-control" required>
+      <div class="col-4">
+        <label class="form-label">Username</label>
+        <input class="form-control" type="text" name="username" id="username">
       </div>
 
-      <div class="col-6 py-2">
-        <label class="form-label">Contraseña:</label>
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2"
-            type="password" name="password" id="password">
-        </div>
+      <div class="col-4">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-control" name="password" id="password">
       </div>
-      <div class="col-6 py-2">
-        <label class="form-label">Repetir Contraseña:</label>
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2"
-            type="password" name="passwordr" id="passwordr">
-        </div>
+      <div class="col-4">
+        <label class="form-label">Comuna:</label>
+        <select class="form-select" name="comuna">
+          <option disabled selected> Selecciona la comuna </option>
+          {% for com in comunas %}
+          <option value="{{com.0}}">{{ com.1}}</option>
+          {% endfor %}
+        </select>
       </div>
-      <div class="col-6 py-2">
-        <label for="validationCustomUsername" class="form-label">Nombre de usuario</label>
-        <div class="input-group has-validation">
-          <span class="input-group-text" id="inputGroupPrepend">@</span>
-          <input type="text" class="form-control" name="username" id="username" aria-describedby="inputGroupPrepend"
-            required>
-        </div>
-      </div>
-      <div class="col-6 py-2">
+
+      <div class="col-4">
         <label class="form-label">Tipo de Usuario:</label>
         <select class="form-select" aria-label="Default select example" name="tipoUsuario">
           <option value="0">Seleccione una opción</option>
@@ -143,37 +122,33 @@
         </select>
       </div>
 
-      <div class="col-6 py-2">
-        <label class="form-label">Comuna:</label>
-        <select class="form-select" aria-label="Default select example" name="comuna">
-          <option value="0">Seleccione una Comuna</option>
-          {% for com in comunas %}
-          <option value="{{com.codComuna}}">{{ com.1}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-6 py-2">
-        <label class="form-label"> Dirección:</label>
-        <input class="form-control" type="text" name="direccion" id="direccion">
-      </div>
-
-
-      <div class="col-6 py-2">
-        <label class="form-label">Sexo:</label>
-        <select class="form-select" aria-label="Default select example" name="tipoSexo">
-          <option selected>Defina su Sexo</option>
-          {% for sex in tipoSexo %}
-          <option value="{{sex.codTipoSexo}}">{{ sex.1}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-6 py-2">
+      <div class="col-4">
         <label class="form-label">Telefono:</label>
         <input class="form-control" name="telefono" id="telefono">
       </div>
 
+      <div class="col-4">
+        <label class="form-label"> Dirección:</label>
+        <input class="form-control" type="text" name="direccion" id="direccion">
+      </div>
+
+      <div class="col-4">
+        <label class="form-label">Correo</label>
+        <input class="form-control" type="text" name="correo" id="correo">
+      </div>
+
+      <div class="col-4">
+        <label class="form-label">Sexo:</label>
+        <select class="form-select" aria-label="Default select example" name="tipoSexo">
+          <option selected>Defina su Sexo</option>
+          {% for sex in tipoSexo %}
+          <option value="{{sex.0}}">{{ sex.1}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
       <div class="col-12 py-2" style="text-align: center;">
-        <button type="button" class="btn btn-primary" style="width: 80%;">Agregar Usuario</button>
+        <button type="submit" class="btn btn-primary" style="width: 80%;">Agregar</button>
       </div>
     </form>
   </div>
