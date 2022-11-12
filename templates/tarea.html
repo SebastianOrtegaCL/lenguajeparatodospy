@@ -9,53 +9,41 @@
 {% endblock %}
 
 {% block body %}
-    <div class="content">
-        <h1> Task master</h1>
-        <table>
-            <tr>
-                <th>Task</th>
-                <th>Added</th>
-                <th>Actions</th>
-            </tr>
-            {% for task in tasks %}
-                
-            <tr>
-                <td> {{ task.0 }} </td>
-                <td> {{ task.1 }} </td>
-                <td>
-                    <a href="/delete/{{task.0}}">Delete</a>
-                    <br>
-                    <a href="">Update</a>
-                    <br>
-                </td>
-            </tr>
-            <h1>{{ task.0 }}</h1>
-
-            {% endfor %}
-        </table>
-
-        <!-- <form action="/tareas" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="text" name="content" id="content">
-            <input type="submit" value="Add Task">
-        </form> -->
-    </div>
-
-
     <header class="masthead">
         <div class="container px-5">
-            <div class="card rounded px-5 py-5">
+            <div class="card rounded px-5 py-5 shadow">
                 <form action="/tareas" method="POST" style="display: flex;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" >
                     <input type="text" class="form-control form-control-lg mr-3" name="content" id="content"
                       placeholder="¿Qué tienes que hacer hoy?" style="margin-right: 20px">
-                    <input class="" type="text" name="created" id="created" value=" {{ current_user.id }}"> 
                       <button type="submit" class="btn btn-primary">Agregar</button>
                 </form>
             </div>
+            <hr>
+            <div class="card rounded px-5 py-5 shadow">
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>Lista de Tareas</th>
+                        <th>Acciones</th>
+                    </tr>
+                    {% for task in tasks %}
+                        
+                    <tr>
+                        <td class="check"><input class="check" type="checkbox" /></td>
+                        <td class="py-3"> {{ task.1 }} </td>
+                        <td>
+                            <button type="button" href="/delete/{{task.0}}" class="btn btn-danger">Eliminar</button>
+                        </td>
+
+                    </tr>
+        
+                    {% endfor %}
+                </table>
+
+
+            </div>
         </div>
     </header>
-
     
-
 {% endblock %}
