@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, Response, session
+from flask import Flask, render_template, request, redirect, url_for, flash, Response, session, abort
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect  # Para el token de protección
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -168,28 +168,41 @@ class UserForm(FlaskForm):
     correo = EmailField('Correo', validators=[InputRequired()])
     imagen = FileField('Sube tu foto de perfil', validators=[InputRequired()])
 
-@app.route('/tareas', methods=['POST', 'GET'])
-def tareas():
-    if request.method == 'POST':
-        contenido = request.form['content']
-        creado_por = current_user.id
-        print(contenido, creado_por)
-        try:
-            cur = db.connection.cursor()
-            cur.execute("INSERT INTO tabla_tareas (contenido, creado_por) VALUES (%s, %s)", [contenido, creado_por])
-            db.connection.commit()
-            return redirect('/tareas')
-        except:
-            return 'No se ha podido agregar la tarea'
-    else:
-        cur = db.connection.cursor()
-        cur.execute('SELECT * FROM tabla_tareas WHERE creado_por = {}'.format(current_user.id))
-        # SELECT * FROM tabla_tareas WHERE creado_por = 19;
-                # WHERE id = {}'.format(id)
-        tasks = cur.fetchall()
-        return render_template('tarea.html', tasks=tasks)
 
+#Página tareas
+@app.route('/tareas', methods=['POST', 'GET'])
+@login_required
+def tareas():
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+    if tipoUsuario == 1:
+        abort(401)
+    elif tipoUsuario == 2:
+        if request.method == 'POST':
+            contenido = request.form['content']
+            creado_por = current_user.id
+            print(contenido, creado_por)
+            try:
+                cur = db.connection.cursor()
+                cur.execute("INSERT INTO tabla_tareas (contenido, creado_por) VALUES (%s, %s)", [contenido, creado_por])
+                db.connection.commit()
+                return redirect('/tareas')
+            except:
+                return 'No se ha podido agregar la tarea'
+        else:
+            cur = db.connection.cursor()
+            cur.execute('SELECT * FROM tabla_tareas WHERE creado_por = {}'.format(current_user.id))
+            # SELECT * FROM tabla_tareas WHERE creado_por = 19;
+                    # WHERE id = {}'.format(id)
+            tasks = cur.fetchall()
+            return render_template('tarea.html', tasks=tasks)
+    elif tipoUsuario == 3:
+        abort(401)
+    
+
+#Eliminar Tareas
 @app.route('/delete/<int:id>', methods=['POST', 'GET'])
+@login_required
 def eliminar_tarea(id):
     try:
         cur = db.connection.cursor()
@@ -199,7 +212,7 @@ def eliminar_tarea(id):
     except:
         return 'No se ha podido eliminar la tarea'
     
-
+#Redirigir a página perfil
 @app.route('/perfil', methods=['GET'])
 @login_required
 def perfil():
@@ -315,10 +328,12 @@ def aprende():
         return render_template('aprende.html')
         # return render_template('error401', 400)
 
+#Base de la cámara
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+#Prender y Apagar cámara
 @app.route('/requests', methods=['POST','GET'])
 def tasks():
     global switch, camera
@@ -336,58 +351,77 @@ def tasks():
         return redirect(url_for('aprende'))
     return redirect(url_for('aprende'))
 
+#Página visualizar usuarios
 @app.route('/edit/')
 @login_required
 def Edit():
-    cur = db.connection.cursor()
-    cur.execute(
-        'SELECT U.id, U.rut, U.nombre, U.apellidos, C.nombre, t.tipoUsuario FROM usuario U INNER JOIN comunas C ON U.comuna = C.codCom INNER JOIN tipousuario t ON U.tipousuario = t.codtipoUsuario;')
-    data = cur.fetchall()
-    print(type(data))
-    return render_template('edit.html', usuarios=data)
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+        if tipoUsuario == 1:
+            cur = db.connection.cursor()
+            cur.execute(
+                'SELECT U.id, U.rut, U.nombre, U.apellidos, C.nombre, t.tipoUsuario FROM usuario U INNER JOIN comunas C ON U.comuna = C.codCom INNER JOIN tipousuario t ON U.tipousuario = t.codtipoUsuario;')
+            data = cur.fetchall()
+            print(type(data))
+            return render_template('edit.html', usuarios=data)
+        elif tipoUsuario == 2:
+            return redirect(url_for('menuDocente'))
+        elif tipoUsuario == 3:
+            return redirect(url_for('menuEstudiante'))
+        
 
+        
+    
+#Agregar Usuarios
 @app.route('/agregarUsuario', methods=['GET', 'POST'])
 @login_required
 def agregarUsuario():
 
-    cur = db.connection.cursor()
-    cur.execute("SELECT * FROM tipousuario")
-    tipoUsuario = cur.fetchall()
-
-    cur = db.connection.cursor()
-    cur.execute("SELECT * FROM comunas")
-    comunas = cur.fetchall()
-
-    cur = db.connection.cursor()
-    cur.execute("SELECT * FROM tiposexo")
-    tipoSexo = cur.fetchall()
-
-    if request.method == 'POST':
-        rut = request.form['rut']
-        username = request.form['username']
-        password = request.form['password']
-        comuna = request.form['comuna']
-        nombre = request.form['nombre']
-        apellidos = request.form['apellido']
-        tipoUsuario = request.form['tipoUsuario']
-        telefono = request.form['telefono']
-        direccion = request.form['direccion']
-        correo = request.form['correo']
-        tipoDeSexo = request.form['tipoSexo']
-        imagen = "imagen.png"
-        print('Registro' + rut, username,
-                password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoDeSexo, imagen)
-        try:
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+        if tipoUsuario == 1:
             cur = db.connection.cursor()
-            cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username,
-                password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoDeSexo, imagen))
-            db.connection.commit()
-            flash('Usuario agregado')
-            return redirect('/agregarUsuario')
-        except:
-            return 'No se ha podido agregar el usuario'
-    else: 
-        return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
+            cur.execute("SELECT * FROM tipousuario")
+            tipoUsuario = cur.fetchall()
+
+            cur = db.connection.cursor()
+            cur.execute("SELECT * FROM comunas")
+            comunas = cur.fetchall()
+
+            cur = db.connection.cursor()
+            cur.execute("SELECT * FROM tiposexo")
+            tipoSexo = cur.fetchall()
+
+            if request.method == 'POST':
+                rut = request.form['rut']
+                username = request.form['username']
+                password = request.form['password']
+                comuna = request.form['comuna']
+                nombre = request.form['nombre']
+                apellidos = request.form['apellido']
+                tipoUsuario = request.form['tipoUsuario']
+                telefono = request.form['telefono']
+                direccion = request.form['direccion']
+                correo = request.form['correo']
+                tipoDeSexo = request.form['tipoSexo']
+                imagen = "imagen.png"
+                print('Registro' + rut, username,
+                        password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoDeSexo, imagen)
+                try:
+                    cur = db.connection.cursor()
+                    cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username,
+                        password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoDeSexo, imagen))
+                    db.connection.commit()
+                    flash('Usuario agregado')
+                    return redirect('/agregarUsuario')
+                except:
+                    return 'No se ha podido agregar el usuario'
+            else: 
+                return render_template('agregarUsuario.html', tipoUsuario= tipoUsuario, comunas = comunas, tipoSexo = tipoSexo)
+        elif tipoUsuario == 2:
+            return redirect(url_for('menuDocente'))
+        elif tipoUsuario == 3:
+            return redirect(url_for('menuEstudiante'))
 
 #Agregar Usuario simple (Excel)
 @app.route('/agregarUsuarioFacil', methods=['GET', 'POST'])
@@ -438,6 +472,7 @@ def agregarUsuarioFacil():
     flash("Usuario Agregado")
     return redirect(url_for('agregarUsuario'),)
 
+#Borrar usuario
 @app.route('/delete/<id>')
 @login_required
 def delete_user(id):
@@ -462,31 +497,54 @@ def delete_user(id):
         db.connection.commit()
     return redirect(url_for('Edit'))
 
+
 @app.route('/menuAdministrador')
 @login_required
 def menuAdministrador():
-    return render_template('menuAdministrador.html')
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+    if tipoUsuario == 1:
+        return render_template('menuAdministrador.html')
+    elif tipoUsuario == 2:
+        return render_template('menuDocente.html')
+    elif tipoUsuario == 3:
+        return render_template('menuEstudiante.html')
+    
 
 @app.route('/menuDocente')
 @login_required
 def menuDocente():
-    return render_template('menuDocente.html')
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+    if tipoUsuario == 1:
+        return render_template('menuAdministrador.html')
+    elif tipoUsuario == 2:
+        return render_template('menuDocente.html')
+    elif tipoUsuario == 3:
+        return render_template('menuEstudiante.html')
 
 @app.route('/menuEstudiante')
 @login_required
 def menuEstudiante():
-    return render_template('menuEstudiante.html')
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+    if tipoUsuario == 1:
+        return render_template('menuAdministrador.html')
+    elif tipoUsuario == 2:
+        return render_template('menuDocente.html')
+    elif tipoUsuario == 3:
+        return render_template('menuEstudiante.html')
 
 @app.route('/logout')
 def logout():
     logout_user()
-    # return redirect(url_for('login'))
     return render_template('index.html')
     
 @app.route('/nosotros')
 def nosotros():
     return render_template('nosotros.html')
 
+#Registro básico (que esta en inicio)
 @app.route('/registro', methods = ['GET', 'POST'])
 def registro():
     form=LoginRegisterForm()
@@ -515,6 +573,7 @@ def registro():
        
     return render_template('registro.html', form=form)
 
+#Envia Id de el usuario a actualizar
 @app.route('/edit/<id>', methods=['POST', 'GET'])
 @login_required
 def edit_select(id):
@@ -523,6 +582,7 @@ def edit_select(id):
     data = cur.fetchall()
     return render_template('edit-contact.html', usuarios = data[0])
 
+#Página de Actualizar Perfil
 @app.route('/update/<id>', methods=['POST'])
 @login_required
 def update(id):
@@ -545,16 +605,24 @@ def update(id):
 @app.route('/diccionario')
 @login_required
 def diccionario():
-    cur = db.connection.cursor()
-    cur.execute(
-        'SELECT * FROM diccionario;')
-    data = cur.fetchall()
-    print(type(data))
-    return render_template('diccionario.html', usuarios=data)
+    if 'tipoUsuario' in session:
+        tipoUsuario = session['tipoUsuario']
+    if tipoUsuario == 1:
+        return render_template('menuAdministrador.html')
+    elif tipoUsuario == 2:
+        cur = db.connection.cursor()
+        cur.execute(
+            'SELECT * FROM diccionario;')
+        data = cur.fetchall()
+        print(type(data))
+        return render_template('diccionario.html', usuarios=data)
+    elif tipoUsuario == 3:
+        return render_template('menuEstudiante.html')
+   
 
 #Ruta Agregar Diccionario
 @app.route('/agregarDiccionario', methods=['POST'])
-#@login.required
+@login_required
 def agregarDiccionario():
     if request.method == 'POST':
         gesto = request.form['gesto']
