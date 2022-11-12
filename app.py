@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, Response, session
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect  # Para el token de protección
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 from wtforms import *
 from wtforms.validators import *
@@ -9,7 +9,6 @@ from wtforms.validators import *
 from random import sample
 import openpyxl
 from werkzeug.utils import secure_filename
-
 import cv2
 import datetime, time
 import os
@@ -173,17 +172,20 @@ class UserForm(FlaskForm):
 def tareas():
     if request.method == 'POST':
         contenido = request.form['content']
-        print(contenido)
+        creado_por = current_user.id
+        print(contenido, creado_por)
         try:
             cur = db.connection.cursor()
-            cur.execute("INSERT INTO tabla_tareas (contenido) VALUES (%s)", [contenido])
+            cur.execute("INSERT INTO tabla_tareas (contenido, creado_por) VALUES (%s, %s)", [contenido, creado_por])
             db.connection.commit()
             return redirect('/tareas')
         except:
             return 'No se ha podido agregar la tarea'
     else:
         cur = db.connection.cursor()
-        cur.execute("SELECT * FROM tabla_tareas")
+        cur.execute('SELECT * FROM tabla_tareas WHERE creado_por = {}'.format(current_user.id))
+        # SELECT * FROM tabla_tareas WHERE creado_por = 19;
+                # WHERE id = {}'.format(id)
         tasks = cur.fetchall()
         return render_template('tarea.html', tasks=tasks)
 

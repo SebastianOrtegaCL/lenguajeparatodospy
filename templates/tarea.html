@@ -49,10 +49,13 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" >
                     <input type="text" class="form-control form-control-lg mr-3" name="content" id="content"
                       placeholder="¿Qué tienes que hacer hoy?" style="margin-right: 20px">
+                    <input class="" type="text" name="created" id="created" value=" {{ current_user.id }}"> 
                       <button type="submit" class="btn btn-primary">Agregar</button>
                 </form>
             </div>
         </div>
     </header>
+
+    
 
 {% endblock %}
