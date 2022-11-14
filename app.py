@@ -593,32 +593,81 @@ def registro():
     return render_template('registro.html', form=form, tipoUsuario=tipoUsuario, comunas=comunas, tipoSexo=tipoSexo)
 
 #Envia Id de el usuario a actualizar
-@app.route('/edit/<id>', methods=['POST', 'GET'])
+@app.route('/edit/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_select(id):
     cur = db.connection.cursor()
+    cur.execute("SELECT * FROM tipousuario")
+    tipoUsuario = cur.fetchall()
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM comunas")
+    comunas = cur.fetchall()
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM tiposexo")
+    tipoSexo = cur.fetchall()
+
+    cur = db.connection.cursor()
     cur.execute('SELECT * FROM usuario WHERE id = {}'.format(id))
     data = cur.fetchall()
-    return render_template('edit-contact.html', usuarios = data[0])
-
-#Página de Actualizar Perfil
-@app.route('/update/<id>', methods=['POST'])
-@login_required
-def update(id):
+    
     if request.method == 'POST':
+        # rut = request.form['rut']
         username = request.form['username']
         password = request.form['password']
         comuna = request.form['comuna']
-        cur = db.connection.cursor()
-        cur.execute("""
-            UPDATE usuario
-            SET username = %s,
-                password = %s,
-                comuna = %s
-            WHERE id = %s
-        """, (username, password, comuna, id))
-        db.connection.commit()
-        return redirect(url_for('Edit'))
+        nombre = request.form['nombre']
+        apellidos = request.form['apellido']
+        tipoUsuario = request.form['tipoUsuario']
+        telefono = request.form['telefono']
+        direccion = request.form['direccion']
+        correo = request.form['correo']
+        tipoSexo = request.form['tipoSexo']
+        print('Registro'+ username, password, comuna, nombre, apellidos, tipoUsuario,
+        telefono, direccion, correo, tipoSexo)
+        try:
+            cur = db.connection.cursor()
+            cur.execute("""
+                UPDATE usuario
+                SET username = %s,
+                    password = %s,
+                    comuna = %s,
+                    nombre = %s,
+                    apellidos = %s,
+                    tipoUsuario = %s,
+                    telefono = %s,
+                    direccion = %s,
+                    correo = %s,
+                    tipoSexo = %s
+                WHERE id = %s
+            """, (username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo, id))
+            db.connection.commit()
+            flash('Usuario actualizado con exito')
+            return redirect(url_for('Edit'))
+        except:
+            flash('El usuario no se ha podido actualizar')
+            return redirect(url_for('Edit'),)
+    return render_template('edit-contact.html', usuarios = data[0], tipoUsuario=tipoUsuario, comunas=comunas, tipoSexo=tipoSexo)
+
+#Página de Actualizar Perfil
+# @app.route('/update/<id>', methods=['POST'])
+# @login_required
+# def update(id):
+#     if request.method == 'POST':
+#         username = request.form['username']
+#         password = request.form['password']
+#         comuna = request.form['comuna']
+#         cur = db.connection.cursor()
+#         cur.execute("""
+#             UPDATE usuario
+#             SET username = %s,
+#                 password = %s,
+#                 comuna = %s
+#             WHERE id = %s
+#         """, (username, password, comuna, id))
+#         db.connection.commit()
+#         return redirect(url_for('Edit'))
 
 #Ruta Diccionario
 @app.route('/diccionario')

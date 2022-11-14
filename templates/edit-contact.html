@@ -86,115 +86,89 @@
 
     <div class="container-md">
 
-        <form class="row g3" action="/update/{{ usuarios.0 }}" method="POST">
+        <form class="row g3" action="/edit/{{ usuarios.0 }}" method="POST">
             <!-- Token -->
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
 
             <div class="col-4">
-                <label class="form-label">Rut:</label>
+                <label class="form-label">Rut</label>
                 <input class="form-control" type="text" name="rut" id="rut" value="{{ usuarios.1 }}" disabled>
-
             </div>
 
             <div class="col-4">
-                <label class="form-label">Nombre:</label>
+                <label class="form-label">Nombre</label>
                 <input class="form-control" type="text" name="nombre" id="nombre" value="{{ usuarios.5 }}">
             </div>
 
             <div class="col-4">
-                <label class="form-label">Apellido:</label>
+                <label class="form-label">Apellido</label>
                 <input class="form-control" type="text" name="apellido" id="apellido" value="{{ usuarios.6 }}">
             </div>
 
             <div class="col-6 py-2">
-                <label class="form-label">Correo:</label>
+                <label class="form-label">Correo</label>
                 <input class="form-control" type="email" name="correo" id="correo" value="{{ usuarios.10 }}" required>
             </div>
+            
             <div class="col-6 py-2">
-                <label class="form-label"> Repetir Correo:</label>
-                <input class="form-control" required>
+                <label class="form-label">Contraseña </label>
+                <input class="form-control" type="password" name="password" id="password" value="{{ usuarios.3 }}" required>
             </div>
 
-            <div class="col-6 py-2">
-                <label class="form-label">Contraseña:</label>
-                <div class="input-group mb-3">
-                    <!--<input class="form-control" type="password" name="password" id="password" > -->
-                    <input type="text" class="form-control" aria-label="Recipient's username"
-                        aria-describedby="button-addon2" type="password" name="password" id="password" value="{{ usuarios.3 }}">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2" name="wf"
-                        onclick="mostrar()"><img src="{{ url_for('static', filename='img/show_password.png') }}"
-                            width="15 px"></button>
-                    <!-- <input type="button" name="wf" onclick="mostrar()"> -->
-                </div>
-            </div>
-            <div class="col-6 py-2">
-                <label class="form-label">Repetir Contraseña:</label>
-                <div class="input-group mb-3">
-                    <!--<input class="form-control" type="password" name="password" id="password" > -->
-                    <input type="text" class="form-control" aria-label="Recipient's username"
-                        aria-describedby="button-addon2" type="password" name="passwordr" id="passwordr">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2" name="wf"
-                        onclick="mostrarPasswordRepeat()"><img src="{{ url_for('static', filename='img/show_password.png') }}"
-                            width="15 px"></button>
-                    <!-- <input type="button" name="wf" onclick="mostrar()"> -->
-                </div>
-            </div>
-            <div class="col-6 py-2">
-                <label for="validationCustomUsername" class="form-label">Nombre de usuario</label>
-                <div class="input-group has-validation">
-                    <span class="input-group-text" id="inputGroupPrepend">@</span>
-                    <input type="text" class="form-control" name="username" id="username" value="{{ usuarios.2 }}"
-                        aria-describedby="inputGroupPrepend" required>
-                </div>
-            </div>
-            <div class="col-6 py-2">
+            <div>
                 <label class="form-label">Tipo de Usuario:</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                <select class="form-select" aria-label="Default select example" name="tipoUsuario">
+                  <option value="0">Seleccione una opción</option>
+                  {% for tip in tipoUsuario %}
+                  <option value="{{tip.0}}">{{ tip.1 }}</option>
+                  {% endfor %}
                 </select>
-            </div>
+              </div>
 
-            <div class="col-6 py-2">
-                <label class="form-label">Comuna:</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+              <div class="col-6 py-2">
+                <label class="form-label">Comuna</label>
+                <select class="form-select" name="comuna">
+                  <option disabled selected> Selecciona la comuna </option>
+                  {% for com in comunas %}
+                  <option value="{{com.0}}">{{ com.1}}</option>
+                  {% endfor %}
                 </select>
-            </div>
+              </div>
             <div class="col-6 py-2">
-                <label class="form-label"> Dirección:</label>
+                <label class="form-label"> Dirección</label>
                 <input class="form-control" type="text" name="direccion" id="direccion" value="{{ usuarios.9 }}">
             </div>
 
 
-            <div class="col-6 py-2">
-                <label class="form-label">Sexo:</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+            <div class="col-4">
+                <label class="form-label">Sexo</label>
+                <select class="form-select" aria-label="Default select example" name="tipoSexo">
+                    <option selected>Defina su Sexo</option>
+                    {% for sex in tipoSexo %}
+                    <option value="{{sex.0}}">{{ sex.1}}</option>
+                    {% endfor %}
                 </select>
             </div>
-            <div class="col-6 py-2">
-                <label class="form-label">Telefono:</label>
-                <input class="form-control">
+
+            <div class="col-4">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" id="username" value="{{ usuarios.2 }}">
             </div>
 
 
-            <div class="col-6">
-                <button type="button" class="btn btn-primary" style="width: 100%;">Actualizar Usuario</button>
+            <div class="col-4">
+                <label class="form-label">Telefono:</label>
+                <input class="form-control" name="telefono" id="telefono">
+              </div>
+
+
+            <div class="py-3">
+                <button class="btn btn-primary" style="width: 100%;">Actualizar Usuario</button>
             </div>
             <div class="col-6">
                 <a class="btn btn-secondary" href="/edit" style="width: 100%;">Volver</a>
             </div>
-
 
 
         </form>
