@@ -60,48 +60,80 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div style="margin-right: 30px; margin-left: 30px">
 
-      <div style="display:flex; flex-direction:row; justify-content: center;">
-        <div class="left" style="display: flex; flex-direction: column;">
+      <div style="display:flex; flex-direction:row; justify-content: center;
+      margin-bottom: 50px;">
+        <div class="left" style="display: flex; flex-direction: column; margin-right: 50px;">
           <div class="reg">
             {{ form.hidden_tag() }}
-            {{ form.rut(class='controls', placeholder='Rut') }}
+            <label class="form-label">Rut</label>
+              {{ form.rut(class='form-control', placeholder='Rut') }}
           </div>
           <div class="reg">
-            {{ form.username(class='controls', placeholder='Username') }}
+            <label class="form-label">Username</label>
+              {{ form.username(class='form-control', placeholder='Username') }}
           </div>
           <div class="reg">
-            {{ form.password(class='controls', placeholder='Password') }}
+            <label class="form-label">Password</label>
+              {{ form.password(class='form-control', placeholder='Password') }}
+          </div>
+          <div>
+            <label class="form-label">Comuna:</label>
+            <select class="form-select" name="comuna">
+              <option disabled selected> Selecciona la comuna </option>
+              {% for com in comunas %}
+              <option value="{{com.0}}">{{ com.1}}</option>
+              {% endfor %}
+            </select>
           </div>
           <div class="reg">
-            {{ form.comuna(class='controls', placeholder='Comuna') }}
-          </div>
-          <div class="reg">
-            {{ form.nombre(class='controls', placeholder='Nombre') }}
+            <label class="form-label">Nombre</label>
+            {{ form.nombre(class='form-control', placeholder='Nombre') }}
           </div>
         </div>
 
-        <div class="right" style="display: flex; flex-direction: column;">
+        <div class="right" style="display: flex; flex-direction: column; margin-left: 50px;">
           <div>
-            {{ form.apellido(class='controls', placeholder='Apellido' )}}
+            <label class="form-label">Apellido</label>
+            {{ form.apellido(class='form-control', placeholder='Apellido' )}}
+          </div>
+
+          <div>
+            <label class="form-label">Tipo de Usuario:</label>
+            <select class="form-select" aria-label="Default select example" name="tipoUsuario">
+              <option value="0">Seleccione una opción</option>
+              {% for tip in tipoUsuario %}
+              <option value="{{tip.0}}">{{ tip.1 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">Telefono</label>
+            {{ form.telefono(class='form-control', placeholder='Telefono') }}
           </div>
           <div>
-            {{ form.tipoUsuario(class='controls', placeholder='Como quieres que te identiques.. (Estudiante, Docente)') }}
+            <label class="form-label">Dirección</label>
+            {{ form.direccion(class='form-control', placeholder='Direccion') }}
           </div>
           <div>
-            {{ form.telefono(class='controls', placeholder='Telefono') }}
+            <label class="form-label">Correo</label>
+            {{ form.correo(class='form-control', placeholder='Correo' )}}
           </div>
+
           <div>
-            {{ form.direccion(class='controls', placeholder='Direccion') }}
+            <label class="form-label">Sexo</label>
+            <select class="form-select" aria-label="Default select example" name="tipoSexo">
+              <option selected>Defina su Sexo</option>
+              {% for sex in tipoSexo %}
+              <option value="{{sex.0}}">{{ sex.1}}</option>
+              {% endfor %}
+            </select>
           </div>
-          <div>
-            {{ form.correo(class='controls', placeholder='Correo' )}}
-          </div>
-          <div>
-            {{ form.tiposexo(class='controls', placeholder='Genero') }}
-          </div>
+
+          
         </div>
           </div>
-          <button class="btn btn-primary btn-block">
+          <button type="submit" class="btn btn-primary btn-block">
               Registrar
             </button>
       <p><a href="{{ url_for('login') }}">¿Ya tengo Cuenta?</a></p>

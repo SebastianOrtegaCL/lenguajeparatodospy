@@ -539,39 +539,58 @@ def menuEstudiante():
 def logout():
     logout_user()
     return render_template('index.html')
-    
+
+@app.route('/faq')
+def faq():
+    return render_template('preguntas.html')    
+
 @app.route('/nosotros')
 def nosotros():
     return render_template('nosotros.html')
 
+
+#######
 #Registro básico (que esta en inicio)
 @app.route('/registro', methods = ['GET', 'POST'])
 def registro():
     form=LoginRegisterForm()
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM tipousuario WHERE codTipoUsuario > 1 AND codTipoUsuario <= 3")
+    tipoUsuario = cur.fetchall()
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM comunas")
+    comunas = cur.fetchall()
+
+    cur = db.connection.cursor()
+    cur.execute("SELECT * FROM tiposexo")
+    tipoSexo = cur.fetchall()
+    
     # if request.method == 'POST':
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST':
         rut = form.rut.data
         username = form.username.data
         password = form.password.data
-        comuna = form.comuna.data
+        comuna = request.form['comuna']
         nombre = form.nombre.data
         apellidos = form.apellido.data
-        tipoUsuario = form.tipoUsuario.data
+        tipoUsuario = request.form['tipoUsuario']
         telefono = form.telefono.data
         direccion = form.direccion.data
         correo = form.correo.data
-        tipoSexo = form.tiposexo.data
+        tipoSexo = request.form['tipoSexo']
 
-        print('Registro: ' + rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo)
-        
-        cur = db.connection.cursor()
-        cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo, "imagen.png"))
-        db.connection.commit()
-        print("Usuario agregado")
-        flash("Usuario Agregado")
-        return redirect(url_for('registro'),)
-       
-    return render_template('registro.html', form=form)
+        try:
+            cur = db.connection.cursor()
+            cur.execute("CALL AgregarUsuarioI(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (rut, username, password, comuna, nombre, apellidos, tipoUsuario, telefono, direccion, correo, tipoSexo, "imagen.png"))
+            db.connection.commit()
+            print("Usuario agregado")
+            flash("Usuario Agregado")
+            return redirect(url_for('registro'),)
+        except:
+            return ' no se ha podido agregar el usuario '
+    return render_template('registro.html', form=form, tipoUsuario=tipoUsuario, comunas=comunas, tipoSexo=tipoSexo)
 
 #Envia Id de el usuario a actualizar
 @app.route('/edit/<id>', methods=['POST', 'GET'])

@@ -1,0 +1,69 @@
+body {
+    background-color: blue;
+    background: rgba(40, 185, 207, 1.0);
+    background: -webkit-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    background: -moz-radial-gradient(center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    background: radial-gradient(ellipse at center, rgba(40, 185, 207, 1.0), rgba(173, 171, 177, 1.0));
+    margin: 0;
+    padding: 0;
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 300;
+}
+
+html {
+    height: 100%;
+    font-size: 100%;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+
+
+.container h1{
+  color: #fff;
+  text-align: center;
+}
+
+details{
+  background-color: #aaa;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+summary {
+  padding: .5em 1.3rem;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;  
+  transition: height 1s ease;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary:after{
+  content: "\002B";
+}
+
+details[open] summary {
+    border-bottom: 1px solid #aaa;
+    margin-bottom: .5em;
+}
+
+details[open] summary:after{
+  content: "\00D7";
+}
+
+details[open] div{
+  padding: .5em 1em;
+}
+
+/* When the button is checked, add a blue background */
